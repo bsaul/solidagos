@@ -1,0 +1,92 @@
+---
+title: "Using solidagos"
+author: "Bradley Saul"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: solidagos.bib
+vignette: >
+  %\VignetteIndexEntry{Using solidagos}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r init,echo=FALSE}
+library(solidagos)
+```
+
+# Study area
+
+```{r, fig.height=0.5, fig.width=8}
+draw_study_area(example_study_area)
+```
+
+# Species and traits
+
+```{r}
+study_species <- 
+  list(
+    speciesA, 
+    speciesB, 
+    speciesC
+  )
+```
+
+# Populations
+
+```{r, fig.height=1, fig.width=4}
+pop <- purrr::map(
+  .x = example_study_area,
+  .f = ~ generate_matern_populations(
+    species_list = study_species, 
+    area = .x,
+    scale = .05)
+)
+```
+
+```{r, fig.height=1, fig.width=4}
+draw_populations(pop[[20]])
+```
+
+```{r, fig.height=1, fig.width=4}
+draw_populations(pop[[450]])
+```
+
+
+```{r, fig.height=1, fig.width=4}
+draw_populations(pop[[900]])
+```
+
+# Study Design
+
+The study will evaluate a two stage sampling design of roadsides. At the first stage, road segments are sampled from a network. At the second stage, simulated observers will follow a protocol to measure populations within each sampled segment. Observers use a probabalistic `dectector` function to take samples within a segment. Different `detector` functions determines with what probability an observer detects population units and how observers take samples. For example, the oracle observer (a.k.a the Weakley observer) observes all population units. An observer using the half-Normal detector walks the length of a segment and observes units with a decaying probability the further away from the road edge. Below we describe the observer and detector functions used in the study and give an example of each.
+
+First, we describe three additional concepts in our simulation: species, 
+
+* network 
+* populations
+
+
+The first 
+
+* first-stage sampling
+  * 
+* second-stage sampling
+  * `detectors` and `observers`
+
+
+* network 
+https://www.r-spatial.org/r/2019/09/26/spatial-networks.html
+
+* populations
+
+
+
+# References
