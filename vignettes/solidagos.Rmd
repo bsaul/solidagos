@@ -30,6 +30,12 @@ draw_study_area(example_study_area)
 
 # Species and traits
 
+A species is a `name`, a `list` of aesthetics (for plotting), and a `list` of traits. `trait`s are functions that take in `properties` of a spatial area and return a `function` of `x` and `y` which are passed to simulators for generating population units on a plane.
+
+```{r}
+speciesA
+```
+
 ```{r}
 study_species <- 
   list(
