@@ -66,7 +66,7 @@
       <h1 data-toc-skip>Using solidagos</h1>
                         <h4 class="author">Bradley Saul</h4>
             
-            <h4 class="date">2020-07-12</h4>
+            <h4 class="date">2020-07-13</h4>
       
       
       <div class="hidden name"><code>solidagos.Rmd</code></div>
@@ -75,17 +75,20 @@
 
     
     
+<p><strong>UNDER DEVELOPMENT</strong></p>
 <pre><code>#&gt; Loading required package: ggplot2</code></pre>
 <div id="study-area" class="section level1">
 <h1 class="hasAnchor">
 <a href="#study-area" class="anchor"></a>Study area</h1>
+<p>The spatial extent of our area of interest is our study area divided into primary sampling units. Each primary sampling unit is a <code>window</code> and <code>properties</code>. <code>window</code> defined the space and <code>properties</code> define enviromental variables associated with that space. The <code>example_study_area</code> mimics a single linear roadside along the gradient of a single environmental variable. Each sampling unit is a 1 x 0.25 rectangle. The units here are relative; each unit could be seen as, e.g., a 20m x 5m transect.</p>
+<p>Here is our study area showing the environmental gradient:</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_study_area.html">draw_study_area</a></span>(<span class="no">example_study_area</span>)</pre></body></html></div>
 <p><img src="solidagos_files/figure-html/unnamed-chunk-1-1.png" width="768"></p>
 </div>
 <div id="species-and-traits" class="section level1">
 <h1 class="hasAnchor">
 <a href="#species-and-traits" class="anchor"></a>Species and traits</h1>
-<p>A species is a <code>name</code>, a <code>list</code> of aesthetics (for plotting), and a <code>list</code> of traits. <code>trait</code>s are functions that take in <code>properties</code> of a spatial area and return a <code>function</code> of <code>x</code> and <code>y</code> which are passed to simulators for generating population units on a plane.</p>
+<p>A species is a <code>name</code>, a <code>list</code> of <code>aes</code>thetics (for plotting), and a <code>list</code> of <code>trait</code>s. <code>trait</code>s are functions that take in <code>properties</code> of a sampling unit and return a <code>function</code> of <code>x</code> and <code>y</code> which are passed to simulators for generating population units on a plane.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">speciesA</span>
 <span class="co">#&gt; $name</span>
 <span class="co">#&gt; [1] "A"</span>
@@ -105,8 +108,8 @@
 <span class="co">#&gt;         rep(val, length(x))</span>
 <span class="co">#&gt;     }</span>
 <span class="co">#&gt; }</span>
-<span class="co">#&gt; &lt;bytecode: 0x7f9d80fe8a50&gt;</span>
-<span class="co">#&gt; &lt;environment: 0x7f9d80fe9a48&gt;</span>
+<span class="co">#&gt; &lt;bytecode: 0x7fc00d7de120&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fc00d7db208&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $traits$clumping</span>
 <span class="co">#&gt; function (properties) </span>
@@ -117,8 +120,9 @@
 <span class="co">#&gt;         rep(val, length(x))</span>
 <span class="co">#&gt;     }</span>
 <span class="co">#&gt; }</span>
-<span class="co">#&gt; &lt;bytecode: 0x7f9d80fea4d8&gt;</span>
-<span class="co">#&gt; &lt;environment: 0x7f9d80feb4d0&gt;</span></pre></body></html></div>
+<span class="co">#&gt; &lt;bytecode: 0x7fc00d7df9e8&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fc00d7e0ba0&gt;</span></pre></body></html></div>
+<p>The example includes 3 species:</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">study_species</span> <span class="kw">&lt;-</span>
   <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
     <span class="no">speciesA</span>,
@@ -129,52 +133,177 @@
 <div id="populations" class="section level1">
 <h1 class="hasAnchor">
 <a href="#populations" class="anchor"></a>Populations</h1>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">pop</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(
+<p>Populations are the coordinates of species specimens along with information about the sampling unit. Here we generate populations from a Matern cluster point process <span class="citation">(Baddeley and Turner 2005)</span>.</p>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">42</span>)
+<span class="no">pop</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(
   <span class="kw">.x</span> <span class="kw">=</span> <span class="no">example_study_area</span>,
   <span class="kw">.f</span> <span class="kw">=</span> ~ <span class="fu"><a href="../reference/generate_matern_populations.html">generate_matern_populations</a></span>(
     <span class="kw">species_list</span> <span class="kw">=</span> <span class="no">study_species</span>,
     <span class="kw">area</span> <span class="kw">=</span> <span class="no">.x</span>,
     <span class="kw">scale</span> <span class="kw">=</span> <span class="fl">.05</span>)
 )</pre></body></html></div>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_populations.html">draw_populations</a></span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">20</span>]])</pre></body></html></div>
-<p><img src="solidagos_files/figure-html/unnamed-chunk-5-1.png" width="384"></p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_populations.html">draw_populations</a></span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">450</span>]])</pre></body></html></div>
+<p>Here’s what a population object looks like:</p>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">pop</span><span class="kw">[[</span><span class="fl">1</span>]]
+<span class="co">#&gt; $window</span>
+<span class="co">#&gt; window: rectangle = [0, 1] x [0, 0.25] units</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $properties</span>
+<span class="co">#&gt; $properties$propA</span>
+<span class="co">#&gt; [1] 0</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $total_n</span>
+<span class="co">#&gt; [1] 154</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $n</span>
+<span class="co">#&gt; [1] 68  1 85</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $x</span>
+<span class="co">#&gt;   [1] 0.99097054 0.99092724 0.96978239 0.97775188 0.97727053 0.93621554</span>
+<span class="co">#&gt;   [7] 0.94589643 0.99694164 0.98117888 0.97777871 0.93629976 0.97661851</span>
+<span class="co">#&gt;  [13] 0.28753744 0.23541718 0.23495695 0.27941377 0.24424258 0.25656522</span>
+<span class="co">#&gt;  [19] 0.22058405 0.23697851 0.25548184 0.22753388 0.29970835 0.31266608</span>
+<span class="co">#&gt;  [25] 0.26881817 0.26014698 0.28896207 0.23962962 0.23474104 0.87260483</span>
+<span class="co">#&gt;  [31] 0.88902984 0.82741147 0.87246744 0.88279192 0.86675680 0.62660757</span>
+<span class="co">#&gt;  [37] 0.68544575 0.69407100 0.61924230 0.66437655 0.65367155 0.66659676</span>
+<span class="co">#&gt;  [43] 0.67779992 0.69506359 0.64928233 0.52723801 0.50261080 0.74404715</span>
+<span class="co">#&gt;  [49] 0.77847290 0.73178286 0.72800846 0.77464487 0.72362519 0.77059985</span>
+<span class="co">#&gt;  [55] 0.74592891 0.75426423 0.78083229 0.77620988 0.76014899 0.74082456</span>
+<span class="co">#&gt;  [61] 0.71882356 0.05039571 0.05966272 0.11701268 0.11435979 0.06205831</span>
+<span class="co">#&gt;  [67] 0.10896647 0.10285368 0.89817854 0.78125914 0.84606770 0.83612571</span>
+<span class="co">#&gt;  [73] 0.80487853 0.84334952 0.83313998 0.84628433 0.80178026 0.82943143</span>
+<span class="co">#&gt;  [79] 0.84579607 0.81635078 0.05238097 0.09370240 0.08386999 0.24516061</span>
+<span class="co">#&gt;  [85] 0.24521225 0.26011166 0.28633266 0.25456375 0.13346397 0.12794590</span>
+<span class="co">#&gt;  [91] 0.18991108 0.16646475 0.80344671 0.84947516 0.82432498 0.84534781</span>
+<span class="co">#&gt;  [97] 0.82902437 0.82591199 0.77008779 0.77778651 0.80035966 0.80374931</span>
+<span class="co">#&gt; [103] 0.79417947 0.83260401 0.85098531 0.10974019 0.11341346 0.12061799</span>
+<span class="co">#&gt; [109] 0.09538494 0.05721010 0.12045080 0.08140400 0.11124457 0.14105951</span>
+<span class="co">#&gt; [115] 0.06344967 0.07791353 0.06151296 0.09695915 0.11467839 0.02183397</span>
+<span class="co">#&gt; [121] 0.00792025 0.01450469 0.01986498 0.02992606 0.05626399 0.02024610</span>
+<span class="co">#&gt; [127] 0.03385079 0.51987481 0.51298693 0.48943521 0.55860664 0.57164125</span>
+<span class="co">#&gt; [133] 0.58227101 0.49236847 0.53979029 0.56048704 0.51633479 0.05801040</span>
+<span class="co">#&gt; [139] 0.10661843 0.04211389 0.09190543 0.05911301 0.03202698 0.10057712</span>
+<span class="co">#&gt; [145] 0.78455710 0.76627597 0.78603569 0.73884162 0.73474856 0.75616947</span>
+<span class="co">#&gt; [151] 0.74780010 0.74399372 0.75170738 0.76663928</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $y</span>
+<span class="co">#&gt;   [1] 0.228613948 0.227526332 0.189171262 0.132458799 0.146704454 0.169761231</span>
+<span class="co">#&gt;   [7] 0.151476818 0.153317102 0.138561706 0.180866744 0.169772039 0.178950919</span>
+<span class="co">#&gt;  [13] 0.196970355 0.234267800 0.171442594 0.169680716 0.222632522 0.201923387</span>
+<span class="co">#&gt;  [19] 0.174797440 0.179224785 0.148731254 0.225653258 0.177327765 0.185292257</span>
+<span class="co">#&gt;  [25] 0.235895224 0.168270952 0.180015128 0.177667577 0.164199908 0.106427467</span>
+<span class="co">#&gt;  [31] 0.075283602 0.090426812 0.091565341 0.126950231 0.074497215 0.172883121</span>
+<span class="co">#&gt;  [37] 0.241504825 0.222745571 0.210113178 0.156382420 0.180041447 0.177935869</span>
+<span class="co">#&gt;  [43] 0.241585008 0.187519004 0.225296539 0.243081611 0.238925040 0.004880961</span>
+<span class="co">#&gt;  [49] 0.031489019 0.030053688 0.015426217 0.081020563 0.031156928 0.061242248</span>
+<span class="co">#&gt;  [55] 0.043865442 0.052750551 0.057820128 0.077000054 0.038633534 0.051407925</span>
+<span class="co">#&gt;  [61] 0.064232966 0.117738660 0.130650666 0.133625584 0.079796898 0.088169144</span>
+<span class="co">#&gt;  [67] 0.073980013 0.072517236 0.017869811 0.232455865 0.221101747 0.162764261</span>
+<span class="co">#&gt;  [73] 0.227332256 0.211379115 0.208767121 0.198961691 0.227127167 0.187261370</span>
+<span class="co">#&gt;  [79] 0.191194944 0.208395742 0.236758163 0.213250128 0.229961748 0.122500396</span>
+<span class="co">#&gt;  [85] 0.100660181 0.165103767 0.128474859 0.115794050 0.230656355 0.215909345</span>
+<span class="co">#&gt;  [91] 0.235075335 0.203549465 0.069381429 0.097077753 0.142502405 0.131614955</span>
+<span class="co">#&gt;  [97] 0.110967671 0.080518783 0.081233628 0.111583631 0.118769795 0.150763123</span>
+<span class="co">#&gt; [103] 0.091703253 0.061283613 0.132132490 0.001083107 0.043916464 0.022591205</span>
+<span class="co">#&gt; [109] 0.033276611 0.007268199 0.085980762 0.101279086 0.114711568 0.111858997</span>
+<span class="co">#&gt; [115] 0.102433280 0.089677155 0.121880745 0.100111748 0.123098109 0.245879207</span>
+<span class="co">#&gt; [121] 0.128606944 0.085361515 0.124132295 0.138506005 0.113312062 0.090603716</span>
+<span class="co">#&gt; [127] 0.132026901 0.036932265 0.031869651 0.053995624 0.052063027 0.021185025</span>
+<span class="co">#&gt; [133] 0.043256820 0.063939000 0.070817736 0.056745331 0.040377475 0.019481744</span>
+<span class="co">#&gt; [139] 0.023064238 0.077638020 0.017255143 0.084444989 0.049989299 0.074740920</span>
+<span class="co">#&gt; [145] 0.094769538 0.137600568 0.147304488 0.152991185 0.164509138 0.106958030</span>
+<span class="co">#&gt; [151] 0.108944725 0.155182174 0.181981838 0.166720330</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $species</span>
+<span class="co">#&gt;   [1] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A"</span>
+<span class="co">#&gt;  [19] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A"</span>
+<span class="co">#&gt;  [37] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A"</span>
+<span class="co">#&gt;  [55] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "B" "C" "C" "C"</span>
+<span class="co">#&gt;  [73] "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C"</span>
+<span class="co">#&gt;  [91] "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C"</span>
+<span class="co">#&gt; [109] "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C"</span>
+<span class="co">#&gt; [127] "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C" "C"</span>
+<span class="co">#&gt; [145] "C" "C" "C" "C" "C" "C" "C" "C" "C" "C"</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $color</span>
+<span class="co">#&gt;   [1] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;   [8] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;  [15] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;  [22] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;  [29] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;  [36] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;  [43] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;  [50] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;  [57] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c"</span>
+<span class="co">#&gt;  [64] "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#e41a1c" "#984ea3" "#ff7f00"</span>
+<span class="co">#&gt;  [71] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt;  [78] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt;  [85] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt;  [92] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt;  [99] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt; [106] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt; [113] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt; [120] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt; [127] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt; [134] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt; [141] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span>
+<span class="co">#&gt; [148] "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00" "#ff7f00"</span></pre></body></html></div>
+<p>We can print populations:</p>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_populations.html">draw_populations</a></span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">20</span>]])</pre></body></html></div>
 <p><img src="solidagos_files/figure-html/unnamed-chunk-6-1.png" width="384"></p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_populations.html">draw_populations</a></span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">900</span>]])</pre></body></html></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_populations.html">draw_populations</a></span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">450</span>]])</pre></body></html></div>
 <p><img src="solidagos_files/figure-html/unnamed-chunk-7-1.png" width="384"></p>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_populations.html">draw_populations</a></span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">900</span>]])</pre></body></html></div>
+<p><img src="solidagos_files/figure-html/unnamed-chunk-8-1.png" width="384"></p>
 </div>
 <div id="study-design" class="section level1">
 <h1 class="hasAnchor">
 <a href="#study-design" class="anchor"></a>Study Design</h1>
-<p>The study will evaluate a two stage sampling design of roadsides. At the first stage, road segments are sampled from a network. At the second stage, simulated observers will follow a protocol to measure populations within each sampled segment. Observers use a probabalistic <code>dectector</code> function to take samples within a segment. Different <code>detector</code> functions determines with what probability an observer detects population units and how observers take samples. For example, the oracle observer (a.k.a the Weakley observer) observes all population units. An observer using the half-Normal detector walks the length of a segment and observes units with a decaying probability the further away from the road edge. Below we describe the observer and detector functions used in the study and give an example of each.</p>
-<p>First, we describe three additional concepts in our simulation: species,</p>
-<ul>
-<li>network</li>
-<li>populations</li>
-</ul>
-<p>The first</p>
-<ul>
-<li>
-<p>first-stage sampling</p>
-<ul>
-<li>
-</ul>
-</li>
-<li>
-<p>second-stage sampling</p>
-<ul>
-<li>
-<code>detectors</code> and <code>observers</code>
-</li>
-</ul>
-</li>
-<li><p>network <a href="https://www.r-spatial.org/r/2019/09/26/spatial-networks.html" class="uri">https://www.r-spatial.org/r/2019/09/26/spatial-networks.html</a></p></li>
-<li><p>populations</p></li>
-</ul>
+<p>At the first stage, units are sampled from the study area. At the second stage, simulated observers follow a <code>protocol</code> to measure populations within each sampled segment. Observers use a probabalistic <code>dectector</code> function to take samples within a segment. Different <code>detector</code> functions determines with what probability an observer detects population units and how observers take samples. For example, the oracle observer (a.k.a the Weakley observer) observes all population units. An observer using the half-Normal detector walks the length of a segment and observes units with a decaying probability the further away from the road edge. Below we describe the observer and detector functions used in the study and give an example of each.</p>
+<div id="example-observer" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example-observer" class="anchor"></a>Example observer</h2>
+<p>The simpliest observer views an entire sampling unit (protocol = <code>cover_area</code>) and observes all the specimens within that unit with probability 1 (detector = <code>oracle_detector</code>.</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">observer1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/observers.html">creater_observer</a></span>(<span class="no">cover_segment</span>, <span class="no">oracle_detector</span>)
+<span class="no">obs</span> <span class="kw">&lt;-</span> <span class="fu">observer1</span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">1</span>]])</pre></body></html></div>
+<p>Here we plot Xs over each specimen collected by our observer:</p>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_populations.html">draw_populations</a></span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">1</span>]]) +
+  <span class="fu">geom_point</span>(
+    <span class="kw">data</span> <span class="kw">=</span> <span class="kw pkg">tibble</span><span class="kw ns">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(!!!<span class="no">obs</span>$<span class="no">data</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"species"</span>)]),
+    <span class="kw">shape</span> <span class="kw">=</span> <span class="fl">4</span>
+  )</pre></body></html></div>
+<p><img src="solidagos_files/figure-html/unnamed-chunk-10-1.png" width="384"></p>
+<p>Another observer systematically observes all specimens within 5 regularly spaced 0.05 x 0.05 unit rectangles within a study unit:</p>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">observer2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/observers.html">creater_observer</a></span>(<span class="no">systematic</span>, <span class="no">oracle_detector</span>)
+<span class="no">obs</span> <span class="kw">&lt;-</span> <span class="fu">observer2</span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">1</span>]])</pre></body></html></div>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="../reference/draw_populations.html">draw_populations</a></span>(<span class="no">pop</span><span class="kw">[[</span><span class="fl">1</span>]]) +
+  <span class="fu">geom_rect</span>(
+    <span class="kw">data</span> <span class="kw">=</span> <span class="kw pkg">tibble</span><span class="kw ns">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(
+      <span class="kw">xmin</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fl">.2</span>) - <span class="fl">0.025</span>,
+      <span class="kw">xmax</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fl">.2</span>) +  <span class="fl">0.025</span>,
+      <span class="kw">ymin</span> <span class="kw">=</span> <span class="fl">0.25</span>/<span class="fl">2</span> - <span class="fl">0.025</span>,
+      <span class="kw">ymax</span> <span class="kw">=</span> <span class="fl">0.25</span>/<span class="fl">2</span> + <span class="fl">0.025</span>,
+    ),
+    <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">xmin</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">xmax</span>, <span class="kw">ymin</span> <span class="kw">=</span> <span class="no">ymin</span>, <span class="kw">ymax</span> <span class="kw">=</span> <span class="no">ymax</span>),
+    <span class="kw">inherit.aes</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
+    <span class="kw">fill</span> <span class="kw">=</span> <span class="st">"grey50"</span>
+    <span class="co"># color = "black"</span>
+  ) +
+  <span class="fu">geom_point</span>(
+    <span class="kw">data</span> <span class="kw">=</span> <span class="kw pkg">tibble</span><span class="kw ns">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(!!!<span class="no">obs</span>$<span class="no">data</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"species"</span>)]),
+    <span class="kw">shape</span> <span class="kw">=</span> <span class="fl">4</span>
+  )</pre></body></html></div>
+<p><img src="solidagos_files/figure-html/unnamed-chunk-12-1.png" width="384"></p>
 </div>
-<div id="references" class="section level1">
+</div>
+<div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
+<div id="refs" class="references hanging-indent">
+<div id="ref-spatstat2005">
+<p>Baddeley, Adrian, and Rolf Turner. 2005. “spatstat: An R Package for Analyzing Spatial Point Patterns.” <em>Journal of Statistical Software</em> 12 (6): 1–42. <a href="http://www.jstatsoft.org/v12/i06/">http://www.jstatsoft.org/v12/i06/</a>.</p>
+</div>
+</div>
 </div>
   </div>
 

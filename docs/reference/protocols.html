@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • solidagos</title>
+<title>Protocols — protocols • solidagos</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,11 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Protocols — protocols" />
+<meta property="og:description" content="A protocol is a function that takes a segment and returns a list of (x, y)
+pairs from which observers will use their detectors.
+That is, a protocol defines the path by which observers traverse
+a segment and take observations." />
 
 
 
@@ -58,7 +62,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -103,144 +107,42 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Protocols</h1>
+    
+    <div class="hidden name"><code>protocols.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>A protocol is a function that takes a segment and returns a list of (x, y)
+pairs from which <code><a href='observers.html'>observers</a></code> will use their <code>detectors</code>.
+That is, a protocol defines the path by which <code><a href='observers.html'>observers</a></code> traverse
+a segment and take observations.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>cover_segment</span>(<span class='no'>segment</span>)
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="collect_area_populations.html">collect_area_populations()</a></code> </p>
-        </td>
-        <td><p>Collect species within a spatial area</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="create_detector.html">create_detector()</a></code> </p>
-        </td>
-        <td><p>Create a detection function</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="create_population_simulator.html">create_population_simulator()</a></code> </p>
-        </td>
-        <td><p>Create a function for simulating a single species</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="detection_funs.html">oracle_detector()</a></code> <code><a href="detection_funs.html">half_norm_detector()</a></code> </p>
-        </td>
-        <td><p>Detection Functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="detection_pdfs.html">phnorm()</a></code> </p>
-        </td>
-        <td><p>Detection PDFs</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="draw_populations.html">draw_populations()</a></code> </p>
-        </td>
-        <td><p>Plot populations</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="draw_study_area.html">draw_study_area()</a></code> </p>
-        </td>
-        <td><p>Plot study area</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="example_study_area.html">example_study_area</a></code> </p>
-        </td>
-        <td><p>An example study area with a single property</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="generate_matern_population.html">generate_matern_population()</a></code> </p>
-        </td>
-        <td><p>Generate a single species population from a Matern Cluster Process</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="generate_matern_populations.html">generate_matern_populations()</a></code> </p>
-        </td>
-        <td><p>Generate a multiple species populations from a Matern Cluster Process</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="matern_traitmap.html">matern_traitmap</a></code> </p>
-        </td>
-        <td><p>Matern trait mapping</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="observers.html">creater_observer()</a></code> </p>
-        </td>
-        <td><p>Create an observer</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="protocols.html">cover_segment()</a></code> <code><a href="protocols.html">systematic()</a></code> </p>
-        </td>
-        <td><p>Protocols</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="solidagos-package.html">solidagos-package</a></code> </p>
-        </td>
-        <td><p>solidagos: TODO</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="species.html">speciesA</a></code> <code><a href="species.html">speciesB</a></code> <code><a href="species.html">speciesC</a></code> </p>
-        </td>
-        <td><p>Species</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="species_traits.html">create_locally_uniform_rarity_trait()</a></code> <code><a href="species_traits.html">create_locally_uniform_clumping_trait()</a></code> </p>
-        </td>
-        <td><p>Trait generators</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="standard_segment.html">standard_segment</a></code> </p>
-        </td>
-        <td><p>Study standard observation segment</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="traiterator.html">traiterator()</a></code> </p>
-        </td>
-        <td><p>TODO</p></td>
-      </tr>
-    </tbody>
+<span class='fu'>systematic</span>(<span class='no'>segment</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>segment</th>
+      <td><p>a study segment</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    
+<ul>
+<li><p><code>cover_segment</code>: observe the entire segment</p></li>
+<li><p><code>systematic</code>: observe 5 smaller quadrats within a segment</p></li>
+</ul>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
