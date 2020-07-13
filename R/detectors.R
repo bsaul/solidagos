@@ -66,6 +66,7 @@ NULL
 #'
 #' Detects specimens with probability 1
 #' @rdname detection_funs
+#' @export
 oracle_detector <- create_detector(
   function(x, y) 1
 )
@@ -74,5 +75,6 @@ oracle_detector <- create_detector(
 #'
 #' Detects specimens with decaying probability with > y, irregardless of x.
 #' @rdname detection_funs
+#' @export
 half_norm_detector <- create_detector(phnorm)
 

@@ -1,59 +1,46 @@
-#' str(example_study_area[[1]]$window)
+#' Protocols
 #'
-#' pop <- generate_matern_populations(list(speciesA, speciesB),
-#'                                  area  = example_study_area[[1]],
-#'                                  scale = .05)
+#' A protocol is a function that takes a segment and returns a list of (x, y)
+#' pairs from which \code{\link{observers}} will use their \code{\link{detectors}}.
+#' That is, a protocol defines the path by which \code{\link{observers}} traverse
+#' a segment and take observations.
 #'
-#' pop$id <- 1:length(pop$x)
-#'
-#' prot <-
-#' purrr::map(
-#'   .x = seq(pop$window$xrange[1] + 0.1, pop$window$xrange[2] - 0.1, by = .2),
-#'   .f = ~ {
-#'     list(
-#'       xrange = c(.x - 0.025, .x+ 0.025),
-#'       yrange = c(.1, .15)
-#'     )
-#'   }
-#' )
-#' library(magrittr)
-#' observables <-
-#' purrr::map(
-#'   .x = prot,
-#'   .f = ~ {
-#'
-#'     which_units <-
-#'       dplyr::between(pop$x, .x$xrange[1], .x$xrange[2]) &
-#'       dplyr::between(pop$y, .x$yrange[1], .x$yrange[2])
-#'
-#'     list(
-#'       id = pop$id[which_units],
-#'       x = pop$x[which_units],
-#'       y = pop$y[which_units],
-#'       species = pop$species[which_units],
-#'       color = pop$color[which_units]
-#'     )
-#'
-#'   }
-#' ) %>%
-#'   purrr::pmap(list) %>%
-#'   purrr::map(unlist)
-#' #'
-#' create_systematic_protocol <- function(window){
-#'
-#'   # Create a list of
-#'   purrr::map(
-#'     .x = seq(window$xrange[1] + 0.1, window$xrange[2] - 0.1, by = .2),
-#'     .f = ~ {
-#'       list(
-#'         xrange = c(.x - 0.025, .x+ 0.025),
-#'         yrange = c(.1, .15)
-#'       )
-#'     }
-#'   )
-#'
-#'
-#'   function(x, y){
-#'
-#'   }
-#' }
+#' @name protocols
+#' @param segment a study segment
+NULL
+
+#' @describeIn protocols observe the entire segment
+#' @export
+cover_segment <- function(segment){
+  segment$prop_area_covered <- 1
+  segment
+}
+
+#' @describeIn protocols observe 5 smaller quadrats within a segment
+#' @export
+systematic <- function(segment){
+  points <- purrr::map(
+    .x = seq(segment$window$xrange[1] + 0.1, segment$window$xrange[2] - 0.1, by = .2),
+    .f = ~ list(x = .x, y = segment$window$yrange[2]/2)
+  )
+
+  observable <- purrr::map2_lgl(
+    .x = segment$x,
+    .y = segment$y,
+    .f = ~ {
+      x.u <- .x; y.u <- .y;
+      any(purrr::map_lgl(points, ~ { (.x$x - 0.025) <= x.u && x.u <= .x$x + 0.025 })) &&
+      any(purrr::map_lgl(points, ~ { (.x$y - 0.025) <= y.u && y.u <= .x$y + 0.025 }))
+    }
+  )
+
+  segment$x <- segment$x[observable]
+  segment$y <- segment$y[observable]
+  segment$species <- segment$species[observable]
+  segment$color   <- segment$color[observable]
+  tot_area <- segment$window$xrange[2]*segment$window$yrange[2]
+  cov_area <- 0.05^2 * length(points)
+  segment$p_area_covered <- cov_area/tot_area
+
+  segment
+}
