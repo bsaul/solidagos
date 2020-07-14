@@ -6,9 +6,9 @@
 \alias{half_norm_detector}
 \title{Detection Functions}
 \usage{
-oracle_detector(x = NULL, y = NULL, ...)
+oracle_detector(x = NULL, y = NULL)
 
-half_norm_detector(x = NULL, y = NULL, ...)
+half_norm_detector(x = NULL, y = NULL)
 }
 \description{
 Detects specimens with probability 1

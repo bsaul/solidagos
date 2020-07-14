@@ -4,7 +4,7 @@
 \alias{create_detector}
 \title{Create a detection function}
 \usage{
-create_detector(FUN)
+create_detector(FUN, ...)
 }
 \arguments{
 \item{FUN}{a probability density (or mass) function whose first two arguments

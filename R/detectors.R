@@ -11,15 +11,18 @@
 #'       parameters for the pdf (\code{FUN}). This function returns a \code{0/1}
 #'       vector of length \code{length(x)} (or \code{length(y)} if \code{x} is
 #'       missing), indicating whether specimens were not detected (1) or not (0).
+#' @export
 
-create_detector <- function(FUN){
+create_detector <- function(FUN, ...){
   force(FUN)
 
   stopifnot(
     all(methods::formalArgs(FUN)[1:2] == c("x", "y"))
   )
 
-  function(x = NULL, y = NULL, ...){
+  dots <- list(...)
+
+  function(x = NULL, y = NULL){
 
     if (!is.null(x) && !is.null(y)){
       stopifnot(length(x) == length(y))
@@ -31,7 +34,7 @@ create_detector <- function(FUN){
       .n = length(x)
     }
 
-    .probs <- do.call(FUN, args = c(list(x = x, y = y), list(...)) )
+    .probs <- do.call(FUN, args = c(list(x = x, y = y), dots) )
 
     stats::rbinom(n = .n, size = 1,  prob = .probs)
   }
@@ -52,6 +55,7 @@ NULL
 #' @references
 #'  Clark RG (2016) Statistical Efficiency in Distance Sampling. PLoS ONE 11(3): e0149298.
 #'     doi:10.1371/journal.pone.0149298
+#' @export
 
 phnorm <- function(x, y, theta){
   exp( -(y^2)/(theta^2))
@@ -76,5 +80,5 @@ oracle_detector <- create_detector(
 #' Detects specimens with decaying probability with > y, irregardless of x.
 #' @rdname detection_funs
 #' @export
-half_norm_detector <- create_detector(phnorm)
+half_norm_detector <- create_detector(phnorm, theta = 1)
 

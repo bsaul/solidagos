@@ -17,7 +17,9 @@ Imports:
   tibble (>= 3.0), 
   spatstat (>= 1.64),
   methods (>= 3.6),
-  scales (>= 1.0)
+  scales (>= 1.0),
+  SDraw (>= 2.1),
+  sp (>= 1.3)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

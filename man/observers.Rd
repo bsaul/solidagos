@@ -2,10 +2,10 @@
 % Please edit documentation in R/observers.R
 \name{observers}
 \alias{observers}
-\alias{creater_observer}
+\alias{create_observer}
 \title{Create an observer}
 \usage{
-creater_observer(protocol, detectionFUN, detectionARGs = list())
+create_observer(protocol, detectionFUN, detectionARGs = list())
 }
 \arguments{
 \item{detectionFUN}{a \link{detection_funs}}

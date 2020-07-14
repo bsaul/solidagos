@@ -9,7 +9,7 @@
 #' @param detectionFUN a \link{detection_funs}
 #' @param detectionARGS a \code{list} of arguments passed to \code{detectionFUN}
 #' @export
-creater_observer <- function(protocol, detectionFUN, detectionARGs = list()){
+create_observer <- function(protocol, detectionFUN, detectionARGs = list()){
   function(segment){
     segment <- protocol(segment)
     pos <- list(x = segment[["x"]], y = segment[["y"]])

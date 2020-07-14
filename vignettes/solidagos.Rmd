@@ -100,16 +100,17 @@ At the first stage, units are sampled from the study area. At the second stage, 
 The simpliest observer views an entire sampling unit (protocol = `cover_area`) and observes all the specimens within that unit with probability 1 (detector = `oracle_detector`.
 
 ```{r}
-observer1 <- creater_observer(cover_segment, oracle_detector)
+observer1 <- create_observer(cover_segment, oracle_detector)
 obs <- observer1(pop[[1]])
 ```
 
 Here we plot Xs over each specimen collected by our observer:
 
 ```{r, fig.height=1, fig.width=4}
+obs <- tibble::tibble(!!!obs$data[c("x", "y", "species")])[obs$observations == 1, ]
 draw_populations(pop[[1]]) +
   geom_point(
-    data = tibble::tibble(!!!obs$data[c("x", "y", "species")]),
+    data = obs,
     shape = 4
   )
 ```
@@ -117,12 +118,13 @@ draw_populations(pop[[1]]) +
 Another observer systematically observes all specimens within 5 regularly spaced 0.05 x 0.05 unit rectangles within a study unit:
 
 ```{r}
-observer2 <- creater_observer(systematic, oracle_detector)
+observer2 <- create_observer(systematic, oracle_detector)
 obs <- observer2(pop[[1]])
 ```
 
 
 ```{r, fig.height=1, fig.width=4}
+obs <- tibble::tibble(!!!obs$data[c("x", "y", "species")])[obs$observations == 1, ]
 draw_populations(pop[[1]]) +
   geom_rect(
     data = tibble::tibble(
@@ -137,9 +139,63 @@ draw_populations(pop[[1]]) +
     # color = "black"
   ) +
   geom_point(
-    data = tibble::tibble(!!!obs$data[c("x", "y", "species")]),
+    data = obs,
     shape = 4
   )
 ```
+
+Another observer walks the long edge of a roadside segment and detects specimens with a decaying probability the further specimens are located from the roadside edge.
+
+```{r}
+observer3 <- create_observer(cover_segment, create_detector(phnorm, theta = 0.1))
+obs <- observer3(pop[[1]])
+```
+
+
+```{r, fig.height=1, fig.width=4}
+obs <- tibble::tibble(!!!obs$data[c("x", "y", "species")])[obs$observations == 1, ]
+draw_populations(pop[[1]]) +
+  geom_point(
+    data = obs,
+    shape = 4
+  )
+```
+
+## Designs
+
+Working towards a prototype...
+
+```{r}
+library(SDraw)
+library(sp)
+
+as_points <- function(area){
+  SpatialPointsDataFrame(
+    data.frame(x = 1:length(area), y = 0), 
+    data = data.frame(id = 1:length(area))
+  )
+}
+
+observer1 <- create_observer(cover_segment, oracle_detector)
+
+srs_oracle_design <- list(
+  stage1 = function(area) { 
+    area[sdraw(x = as_points(area), n = 10, type = "SRS")$id] 
+  },
+  stage2 = function(segment) { observer1(segment) }
+)
+
+
+do_study <- function(pop, design){
+  s1 <- design$stage1(pop)
+  s2 <- purrr::map(s1, ~ design$stage2(.x))
+  s2
+}
+
+# do_study(pop, srs_oracle_design)
+
+```
+
+
 
 # References
